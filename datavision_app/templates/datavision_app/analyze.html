@@ -1,0 +1,127 @@
+{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Data Analysis & Visualization</h1>
+  <p class="lead">Upload a CSV/XLSX or pick a sample dataset to explore your data.</p>
+
+  {% if error %}
+    <div class="alert">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="card form-card">
+    {% csrf_token %}
+    <label for="sample_dataset">Choose a sample dataset</label>
+    <select name="sample_dataset" id="sample_dataset">
+      {% for s in sample_choices %}
+        <option value="{{ s }}">{{ s|title }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="datafile">Or upload CSV / XLSX</label>
+    <input type="file" name="datafile" id="datafile" accept=".csv,.xlsx">
+
+    <div class="form-actions">
+      <button class="btn primary" type="submit">Analyze</button>
+    </div>
+  </form>
+
+  {% if message %}
+    <p class="muted">{{ message }}</p>
+  {% endif %}
+
+  {% if df_head %}
+    <h3>Preview (first rows)</h3>
+    <div class="card">{{ df_head|safe }}</div>
+    <p><strong>Rows:</strong> {{ n_rows }} &nbsp; <strong>Columns:</strong> {{ n_cols }}</p>
+
+    <h3>Column types</h3>
+    <div class="card">{{ dtypes|safe }}</div>
+
+    <h3>Missing values</h3>
+    {% if missing_html %}
+      <div class="card">{{ missing_html|safe }}</div>
+    {% else %}
+      <p class="muted">No missing values</p>
+    {% endif %}
+
+    <h3>Summary statistics</h3>
+    {% if summary_html %}
+      <div class="card">{{ summary_html|safe }}</div>
+    {% else %}
+      <p class="muted">No numeric columns to summarize.</p>
+    {% endif %}
+
+    <h3>Pairplot</h3>
+    {% if pairplot_url %}
+      <div class="card"><img src="{{ pairplot_url }}" alt="pairplot" style="max-width:100%;height:auto"></div>
+    {% elif pairplot_error %}
+      <div class="alert">Could not generate pairplot: {{ pairplot_error }}</div>
+    {% else %}
+      <p class="muted">Not enough numeric columns for pairplot.</p>
+    {% endif %}
+
+    <h3>Correlation heatmap</h3>
+    {% if heatmap_html %}
+      <div class="card">{{ heatmap_html|safe }}</div>
+    {% else %}
+      <p class="muted">No numeric columns for correlation heatmap.</p>
+    {% endif %}
+
+    <h3>Interactive plot</h3>
+    {% if numeric_columns %}
+      <form method="post" class="card form-card">
+        {% csrf_token %}
+        <label for="x_col">X-axis</label>
+        <select name="x_col" id="x_col">
+          {% for c in numeric_columns %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="y_col">Y-axis</label>
+        <select name="y_col" id="y_col">
+          {% for c in numeric_columns %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="plot_type">Plot Type</label>
+        <select name="plot_type" id="plot_type">
+          <option>Scatter</option>
+          <option>Line</option>
+          <option>Bar</option>
+          <option>Histogram</option>
+          <option>KDE</option>
+        </select>
+
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Render plot</button>
+        </div>
+      </form>
+
+      {% if interactive_plot_html %}
+        <div class="card">{{ interactive_plot_html|safe }}</div>
+      {% elif interactive_error %}
+        <div class="alert">{{ interactive_error }}</div>
+      {% endif %}
+    {% else %}
+      <p class="muted">No numeric columns available for interactive plots.</p>
+    {% endif %}
+
+  {% endif %}
+
+</section>
+ 
+<section id="features" class="container">
+  <h2>Features</h2>
+  <p class="muted">Key capabilities of DataVision Pro — generated automatically.</p>
+  <div class="features">
+    {% for f in features %}
+      <div class="feature">
+        <h4>{{ f.title }}</h4>
+        <p class="muted">{{ f.desc }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

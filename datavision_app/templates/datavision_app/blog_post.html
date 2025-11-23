@@ -1,0 +1,8 @@
+{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>{{ post.title }}</h1>
+  <div class="card">{{ post.content|safe }}</div>
+  <p><a class="btn ghost" href="{% url 'datavision:blog' %}">Back to blog</a></p>
+</section>
+{% endblock %}

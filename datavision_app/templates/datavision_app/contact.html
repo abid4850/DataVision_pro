@@ -1,0 +1,22 @@
+{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Contact Us</h1>
+  <p class="lead">Have a question or suggestion? Send us a message.</p>
+
+  {% if message %}
+    <div class="alert">{{ message }}</div>
+  {% endif %}
+
+  <form method="post" class="card form-card">
+    {% csrf_token %}
+    <label for="name">Name</label>
+    <input name="name" id="name" />
+    <label for="email">Email</label>
+    <input name="email" id="email" />
+    <label for="message">Message</label>
+    <textarea name="message" id="message" rows="6"></textarea>
+    <div class="form-actions"><button class="btn primary" type="submit">Send</button></div>
+  </form>
+</section>
+{% endblock %}

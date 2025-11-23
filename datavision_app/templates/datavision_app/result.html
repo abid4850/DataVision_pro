@@ -1,0 +1,68 @@
+﻿{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="result">
+  <h2>Your wordcloud</h2>
+  <p class="muted">Right-click the cloud to save, or open in new tab for full resolution.</p>
+
+  {% if error %}
+    <div class="alert">{{ error }}</div>
+  {% else %}
+    <div class="image-wrap">
+      <canvas id="wordcloud-canvas" width="1000" height="600"></canvas>
+    </div>
+    <p><a class="btn primary" href="{% url 'datavision:home' %}">Generate another</a></p>
+  {% endif %}
+
+  <!-- wordcloud2.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.2/wordcloud2.min.js" integrity="sha512-+XvR7Rgv3fF+F7dQp0m9I3YAa1i+Z8Hj3gql7F6F7G6PqXv6fVb8Yc1g6R9G1Zy1hb6Qz6yZlL6c7e1t6bK9EA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    (function(){
+      // raw text passed from server
+      const rawText = {{ raw_text|default:''|escapejs }};
+      if(!rawText || rawText.trim().length === 0) return;
+
+      // build frequency map (simple tokenizer)
+      const words = rawText
+        .toLowerCase()
+        .replace(/[^a-z0-9\s'-]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+
+      const freq = {};
+      words.forEach(w => {
+        // simple stopwords list - you can expand it
+        const stop = ['the','and','is','in','to','of','a','for','on','with','that','this','it','as','are','an','be','by'];
+        if(w.length < 2 || stop.includes(w)) return;
+        freq[w] = (freq[w] || 0) + 1;
+      });
+
+      const list = Object.entries(freq).sort((a,b)=>b[1]-a[1]);
+      if(list.length === 0){
+        document.getElementById('wordcloud-canvas').insertAdjacentHTML('afterend','<p class="muted">Not enough content to generate a wordcloud.</p>');
+        return;
+      }
+
+      const wordList = list.map(([word, count]) => [word, Math.max(5, count)]);
+
+      const canvas = document.getElementById('wordcloud-canvas');
+      // draw using wordcloud2
+      WordCloud(canvas, {
+        list: wordList,
+        gridSize: Math.round(16 * (canvas.width / 1024)),
+        weightFactor: function (size) { return Math.pow(size, 1.1) * (canvas.width / 1024); },
+        fontFamily: 'Segoe UI, Roboto, Arial, sans-serif',
+        color: function (word, weight) {
+          // gradient coloring
+          const palette = ['#4f46e5','#06b6d4','#06b6a4','#f59e0b','#ef4444'];
+          return palette[Math.floor(Math.random() * palette.length)];
+        },
+        backgroundColor: 'rgba(0,0,0,0)',
+        rotateRatio: 0.1,
+        rotationSteps: 2,
+        drawOutOfBound: false
+      });
+    })();
+  </script>
+
+{% endblock %}

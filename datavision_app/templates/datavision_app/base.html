@@ -1,0 +1,40 @@
+﻿<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title|default:"DataVision Pro" }}</title>
+  <meta name="description" content="{{ description|default:"Generate wordclouds and visualise text data — DataVision Pro." }}">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="{% static 'datavision_app/favicon.ico' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static "datavision_app/css/styles.css" %}">
+  <script defer src="{% static "datavision_app/js/main.js" %}"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{% url "datavision:home" %}">DataVision Pro</a>
+    <nav class="nav">
+      <a href="{% url "datavision:home" %}">Home</a>
+      <a href="{% url 'datavision:home' %}#features">Feature</a>
+      <a href="{% url 'datavision:blog' %}">Blog</a>
+      <a href="{% url 'datavision:contact' %}">Contact Us</a>
+    </nav>
+    <div class="cta-wrap">
+      <a class="btn primary" href="{% url 'datavision:analyze' %}">Analyze</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© {% now "Y" %} DataVision Pro — Professional data visualisation</p>
+  </div>
+</footer>
+</body>
+</html>

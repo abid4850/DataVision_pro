@@ -1,0 +1,40 @@
+﻿{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Beautiful wordclouds in seconds</h1>
+  <p class="lead">Paste your text or upload a .txt file. Fast, responsive and export-ready images.</p>
+
+  {% if error %}
+    <div class="alert">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="card form-card">
+    {% csrf_token %}
+    <label for="text">Paste text</label>
+    <textarea name="text" id="text" rows="6" placeholder="Paste text here..."></textarea>
+
+    <label for="file">Or upload .txt</label>
+    <input type="file" name="file" id="file" accept=".txt">
+
+    <div class="form-actions">
+      <button class="btn primary" type="submit">Generate Wordcloud</button>
+      <button class="btn ghost" type="reset">Reset</button>
+    </div>
+  </form>
+</section>
+
+<section id="features" class="features">
+  <div class="feature">
+    <h3>Professional UI</h3>
+    <p>Responsive layout, modern gradients and accessible controls.</p>
+  </div>
+  <div class="feature">
+    <h3>Fast Processing</h3>
+    <p>Server-side generation using optimized libraries.</p>
+  </div>
+  <div class="feature">
+    <h3>SEO ready</h3>
+    <p>Semantic markup, meta tags and descriptive titles for discoverability.</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "datavision_app/base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Blog</h1>
+  <p class="lead">Latest articles and tips about data visualization and text analysis.</p>
+
+  {% if posts %}
+    <div class="features">
+      {% for p in posts %}
+        <article class="feature">
+          <h3>{{ p.title }}</h3>
+          <p class="muted">{{ p.excerpt }}</p>
+          <p><a class="btn ghost" href="{% url 'datavision:blog_post' p.slug %}">Read more</a></p>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No posts available yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
